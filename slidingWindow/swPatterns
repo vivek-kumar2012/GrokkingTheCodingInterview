@@ -1,7 +1,171 @@
-1.
-2.
-3.
-4.
-5.
-6.
-7.
+In many coding problems where we are dealing with an array (or a LinkedList), we are asked to find or calculate something among all the subarrays (or sublists)
+of a given size.Size may be given directly or indirectly.
+
+1. Leetcode 643 (https://leetcode.com/problems/maximum-average-subarray-i/)
+---------------------------------------------------------------------------
+class Solution {
+public:
+    //Basic approach :- time :- O(nk) | space :- O(1) where n = length of nums and k = size of subarray
+    double findMaxAverage(vector<int>& nums, int k) {
+        double res = -1e9;
+        for(int i = 0; i <= nums.size() - k; i++){
+            int windowSum = 0;
+            for(int j = 0; j < k; j++){
+                windowSum += nums[i + j];
+            }
+            res = max(res, (double)windowSum / k);
+        }
+        return res;
+    }
+};
+
+what is in-efficient in basic approach code ?
+ans:- we have already calculated sum of k length of subarray in start for 0th index so when we are starting a subarray form 1st(any ith) index we have already 
+computed k - 1 values of subarray so we only need kth value of subarray.
+
+class Solution {
+public:
+    //optimized approach :- time :- O(n) | space :- O(1) where n = length of array nums
+    double findMaxAverage(vector<int>& nums, int k) {
+        double res = -1e9, windowSum = 0;
+        for(int i = 0; i < nums.size(); i++){
+            windowSum += nums[i];
+            if(i >= k - 1){
+                res = max(res, windowSum / k);
+                windowSum -= nums[i + 1 - k];
+            }
+        }
+        return res;
+    }
+};
+
+2. GeeksForGeeks(https://practice.geeksforgeeks.org/problems/max-sum-subarray-of-size-k5313/1?utm_source=gfg&utm_medium=article&utm_campaign=bottom_sticky_on_article)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+class MaxSumSubArrayOfSizeK
+{
+   //Basic approach :- time :- O(nk) | space :- O(1) where n = length of arr and k = size of subarray
+public:
+    static int findMaxSumSubArray(int k, const vector<int> &arr)
+    {
+        int maxSum = 0, windowSum;
+        for (int i = 0; i <= arr.size() - k; i++)
+        {
+            windowSum = 0;
+            for (int j = i; j < i + k; j++)
+            {
+                windowSum += arr[j];
+            }
+            maxSum = max(maxSum, windowSum);
+        }
+
+        return maxSum;
+    }
+};
+
+class Solution{ 
+    //optimized approach :- time :- O(n) | space(1) where n = length of arr
+public:
+    long maximumSumSubarray(int K, vector<int> &Arr , int N){
+        long res = INT_MIN, windowSum = 0;
+        for(int i = 0; i < N; i++){
+            windowSum += Arr[i];
+            if(i >= K - 1){
+                res = max(res, windowSum);
+                windowSum -= Arr[i + 1- K];
+            }
+        }
+        return res;
+    }
+};
+
+3. Leetcode 209 (https://leetcode.com/problems/minimum-size-subarray-sum/)***(imp concept)
+---------------------------------------------------------------------------
+class Solution {
+public:
+    //basic approach :- time :- O(n^2) | space :- O(1) where n = length of nums
+    int minSubArrayLen(int target, vector<int>& nums) {
+        int windowLength = INT_MAX;
+        for(int i = 0; i < nums.size(); i++){
+            int windowSum = 0;
+            int j = i;
+            while(j < nums.size() && windowSum < target){
+                windowSum += nums[j++];
+            }
+            
+            if(windowSum >= target){
+                windowLength = min(windowLength, j - i);
+            }
+        }
+        return windowLength == INT_MAX ? 0 : windowLength;
+    }
+};
+
+class Solution {
+public:
+    //optimized approach :- time :- O(n) | space :- O(1)
+    int minSubArrayLen(int target, vector<int>& nums) {
+        int windowLength = INT_MAX, windowSum = 0, windowStart = 0;
+        for(int windowEnd = 0; windowEnd < nums.size(); windowEnd++){
+            windowSum += nums[windowEnd];
+            while(windowSum >= target){
+                windowLength = min(windowLength, windowEnd + 1 - windowStart);
+                windowSum -= nums[windowStart++];
+            }
+        }
+        return windowLength == INT_MAX ? 0 : windowLength;
+    }
+};
+
+4. GeeksForGeeks(https://practice.geeksforgeeks.org/problems/longest-k-unique-characters-substring0853/1)
+----------------------------------------------------------------------------------------------------------
+class Solution{
+    //basic approach :- time :- O(n^2) | space :- O(1) where n = length of string s
+  public:
+    int longestKSubstr(string s, int k) {
+        int windowLength = -1;
+        for(int i = 0; i < s.size(); i++){
+            int j = i;
+            unordered_set<char> windowChar;
+            while(j < s.size() && windowChar.size() <= k){
+                windowChar.insert(s[j]);
+                if(windowChar.size() > k){
+                    break;
+                }
+                j++;
+            }
+            
+            if(windowChar.size() >= k){
+                windowLength = max(windowLength, j - i);
+            }
+        }
+        return windowLength;
+    }
+};
+
+class Solution{
+    //optimized approach :- time :- O(n) | space :- O(1) where n = length of string s
+  public:
+    int longestKSubstr(string s, int k) {
+        int windowStart = 0, windowLength = -1;
+        unordered_map<char, int> windowChar;
+        for(int windowEnd = 0; windowEnd < s.size(); windowEnd++){
+            windowChar[s[windowEnd]] += 1;
+            
+            while(windowChar.size() > k){
+                char leftChar = s[windowStart++];
+                windowChar[leftChar] -= 1;
+                if(windowChar[leftChar] == 0){
+                    windowChar.erase(leftChar);
+                }
+            }
+            
+            if(windowChar.size() == k){
+                windowLength = max(windowLength, windowEnd + 1 - windowStart);
+            }
+        }
+        return windowLength;
+    }
+};
+
+variation Problem Leetcode:- Given a string, find the length of the longest substring in it with no more than K distinct characters. 
+soln :- just do one simple change in above code u will get the solution(think it yourself).
