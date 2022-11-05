@@ -196,3 +196,38 @@ public:
 };
 
 Note :- problem is variation of longest subarray with k distinct elements where k == 2(variation of 4th problem)
+
+6. Leetcode (https://leetcode.com/problems/longest-substring-without-repeating-characters/)
+--------------------------------------------------------------------------------------------
+class Solution {
+    //basic approach :- time :- O(n^2) | space :- O(1) where n = length of s
+public:
+    int lengthOfLongestSubstring(string s) {
+        int res = 0;
+        for(int i = 0; i < s.length(); i++){
+            unordered_set<char> windowChar;
+            int j = i;
+            while(j < s.length() && windowChar.find(s[j]) == windowChar.end()){
+                windowChar.insert(s[j]);
+                j++;
+            }
+            res = max(res, j - i);
+        }
+        return res;
+    }
+};
+
+class Solution {
+    //optimized approach :- time :- O(n) | space :- O(1) where n = length of s
+public:
+    int lengthOfLongestSubstring(string s) {
+        vector<int> charToIndexMap(256, -1);
+        int res = 0, windowStart = 0;
+        for(int windowEnd = 0; windowEnd < s.size(); windowEnd++){
+            windowStart = max(charToIndexMap[s[windowEnd]] + 1, windowStart);
+            res = max(res, windowEnd + 1 - windowStart);
+            charToIndexMap[s[windowEnd]] = windowEnd;
+        }
+        return res;
+    }
+};
