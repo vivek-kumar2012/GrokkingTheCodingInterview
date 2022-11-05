@@ -169,3 +169,29 @@ class Solution{
 
 variation Problem Leetcode:- Given a string, find the length of the longest substring in it with no more than K distinct characters. 
 soln :- just do one simple change in above code u will get the solution(think it yourself).
+
+5. Leetcode (https://leetcode.com/problems/fruit-into-baskets/)
+Basic approach is similar to 4th problem basic solution.
+
+class Solution {
+    //optimized approach :- time :- O(n) | space :- O(1) where n = length of fruits array
+public:
+    int totalFruit(vector<int>& fruits) {
+        int windowStart = 0, res = 0;
+        unordered_map<int, int> fruitsTypes;
+        for(int windowEnd = 0; windowEnd < fruits.size(); windowEnd++){
+            fruitsTypes[fruits[windowEnd]] += 1;
+            while(fruitsTypes.size() > 2){
+                fruitsTypes[fruits[windowStart]] -= 1;
+                if(fruitsTypes[fruits[windowStart]] == 0){
+                    fruitsTypes.erase(fruits[windowStart]);
+                }
+                windowStart++;
+            }
+            res = max(res, windowEnd + 1 - windowStart);
+        }
+        return res;
+    }
+};
+
+Note :- problem is variation of longest subarray with k distinct elements where k == 2(variation of 4th problem)
