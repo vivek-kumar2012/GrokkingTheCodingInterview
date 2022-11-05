@@ -171,6 +171,7 @@ variation Problem Leetcode:- Given a string, find the length of the longest subs
 soln :- just do one simple change in above code u will get the solution(think it yourself).
 
 5. Leetcode (https://leetcode.com/problems/fruit-into-baskets/)
+-------------------------------------------------------------------
 Basic approach is similar to 4th problem basic solution.
 
 class Solution {
