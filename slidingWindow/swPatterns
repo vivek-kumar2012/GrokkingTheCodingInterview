@@ -231,3 +231,52 @@ public:
         return res;
     }
 };
+
+7. Leetcode (https://leetcode.com/problems/longest-repeating-character-replacement/)
+----------------------------------------------------------------------------------------
+class Solution {
+    //basic approach :- time :- O(n^2) | space :- O(1) where n = length of s
+public:
+    int characterReplacement(string s, int k) {
+        int windowLength = 0;
+        for(int i = 0; i < s.length(); i++){
+            vector<int> windowCharFreq(26, 0);
+            int maxCharFreq = 1;
+            int j = i;
+            windowCharFreq[s[j] - 'A'] += 1; 
+            while(j < s.length() && (j + 1 - i - maxCharFreq) <= k){
+                j++;
+                if(j < s.length()){
+                    windowCharFreq[s[j] - 'A'] += 1;
+                    maxCharFreq = max(maxCharFreq, windowCharFreq[s[j] - 'A']);
+                }
+            }
+            windowLength = max(windowLength, j - i);
+        }
+        return windowLength;
+    }
+};
+
+class Solution {
+    //optimized approach :- time :- O(n) | space :- O(1) where n = length of s
+public:
+    int characterReplacement(string s, int k) {
+        int windowStart = 0, windowLength = 0, maxCharFreq = 0;
+        vector<int> windowCharFreq(26, 0);
+        for(int windowEnd = 0; windowEnd < s.length(); windowEnd++){
+            windowCharFreq[s[windowEnd] - 'A'] += 1;
+            maxCharFreq = max(maxCharFreq, windowCharFreq[s[windowEnd] - 'A']);
+            while(windowEnd + 1 - windowStart - maxCharFreq > k){
+                windowCharFreq[s[windowStart] - 'A'] -= 1;
+                //no need to count maxCharFreq while shrinking window think Why???????
+                //maxCharFreq = 0;
+                // for(int i = 0; i < 26; i++){
+                //     maxCharFreq = max(maxCharFreq, windowCharFreq[i]);
+                // }
+                windowStart += 1;
+            }
+            windowLength = max(windowLength, windowEnd + 1 - windowStart);
+        }
+        return windowLength;
+    }
+};
