@@ -320,3 +320,78 @@ public:
         return windowLength;
     }
 };
+
+9. Leetcode (https://leetcode.com/problems/permutation-in-string/)
+------------------------------------------------------------------
+class Solution {
+    //basic approach :- time :- O(n*m) | space:- O(1) where n and m are length of s1 and s2 
+public:
+    bool checkInclusion(string s1, string s2) {
+        if(s1.size() > s2.size()){
+            return false;
+        }
+        
+        unordered_map<char, int> s1Freq;
+        for(char ch : s1){
+            s1Freq[ch] += 1;
+        }
+        
+        for(int i = 0; i < s2.length(); i++){
+            if(s1Freq.find(s2[i]) == s1Freq.end()){
+                continue;
+            }
+            unordered_map<char, int> windowFreq;
+            int j = i;
+            while(j < s2.length() && s1Freq.find(s2[j]) != s1Freq.end()){
+                windowFreq[s2[j]] += 1;
+                if(s1Freq == windowFreq){ //comparing two hashmaps
+                    return true;
+                }
+                j++;
+            }
+            
+        }
+        return false;
+    }
+};
+
+class Solution {
+    //optimized approach :- time:- O(n) | space:- O(1) where n = length of s2
+public:
+    bool checkInclusion(string s1, string s2) {
+        if(s1.length() > s2.length()){
+            return false;
+        }
+        int matched = 0, windowStart = 0;
+        unordered_map<char, int> charFreqMap;
+        for(char ch : s1){
+            charFreqMap[ch] += 1;
+        }
+        
+        for(int windowEnd = 0; windowEnd < s2.length(); windowEnd++){
+            char rightChar = s2[windowEnd];
+            if(charFreqMap.find(rightChar) != charFreqMap.end()){
+                charFreqMap[rightChar] -= 1;
+                if(charFreqMap[rightChar] == 0){
+                    matched += 1;
+                }
+            }
+            
+            if(matched == charFreqMap.size()){
+                return true;
+            }
+            
+            if(windowEnd >= s1.length() - 1){
+                //shrink the window
+                char leftChar = s2[windowStart++];
+                if(charFreqMap.find(leftChar) != charFreqMap.end()){
+                    if(charFreqMap[leftChar] == 0){
+                        matched -= 1;
+                    }
+                    charFreqMap[leftChar] += 1;
+                }
+            }
+        }
+        return false;
+    }
+};
