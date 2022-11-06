@@ -280,3 +280,43 @@ public:
         return windowLength;
     }
 };
+
+8. Leetcode (https://leetcode.com/problems/max-consecutive-ones-iii/)
+-----------------------------------------------------------------------
+class Solution {
+    //basic approach :- time :- O(n^2) | space :- O(1) where n = size of nums
+public:
+    int longestOnes(vector<int>& nums, int k) {
+        int res = 0;
+        for(int i = 0; i < nums.size(); i++){
+            vector<int> binaryFreq(2, 0);
+            int j = i;
+            binaryFreq[nums[j]] += 1;
+            while(j < nums.size() && binaryFreq[0] <= k){
+                j++;
+                if(j < nums.size()){
+                    binaryFreq[nums[j]] += 1;
+                }
+            }
+            res = max(res, j - i);
+        }
+        return res;
+    }
+};
+
+class Solution {
+    //basic approach :- time:- O(n) | space:- O(1) where n = length of nums
+public:
+    int longestOnes(vector<int>& nums, int k) {
+        int windowLength = 0, windowStart = 0;
+        vector<int> binaryFreqWindow(2, 0);
+        for(int windowEnd = 0; windowEnd < nums.size(); windowEnd++){
+            binaryFreqWindow[nums[windowEnd]] += 1;
+            while(binaryFreqWindow[0] > k){
+                binaryFreqWindow[nums[windowStart++]] -= 1;
+            }
+            windowLength = max(windowLength, windowEnd + 1 - windowStart);
+        }
+        return windowLength;
+    }
+};
