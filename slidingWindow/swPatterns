@@ -484,3 +484,47 @@ public:
         return (substrIdx == -1) ? "" : s.substr(substrIdx, substrLength);
     }
 };
+
+11. Leetcode(https://leetcode.com/problems/substring-with-concatenation-of-all-words/)
+----------------------------------------------------------------------------------------
+class Solution {
+public:
+    //basic approach :- time :- O(n*m) | space :- O(m) where n = length of s and m = size of words vector
+    //optimized approach :- time :- O(n*m) | space :- O(m) with some cases handling
+    //if u know better Solution than this comment it down...
+    vector<int> findSubstring(string s, vector<string>& words) {
+        vector<int> ans;
+        int conStrLength = words.size() * words[0].length();
+        if(conStrLength > s.length()){
+            return ans;
+        }
+        
+        unordered_map<string, int> wordsFreqMap;
+        for(auto word : words){
+            wordsFreqMap[word] += 1;
+        }
+        
+        for(int i = 0; i <= s.length() - conStrLength; i++){
+            unordered_map<string, int> windowWordsFreqMap;
+            for(int j = 0; j < words.size(); j++){
+                int nextWordIndex = i + j * words[0].length();
+                string word = s.substr(nextWordIndex, words[0].length());
+                
+                if(wordsFreqMap.find(word) == wordsFreqMap.end()){
+                    break;
+                }
+                
+                windowWordsFreqMap[word] += 1;
+                
+                if(windowWordsFreqMap[word] > wordsFreqMap[word]){
+                    break;
+                }
+                
+                if(j + 1 == words.size()){
+                    ans.push_back(i);
+                }
+            }
+        }
+        return ans;
+    }
+};
