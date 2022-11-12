@@ -397,3 +397,90 @@ public:
 };
 
 Same Problem slightly modification :- 438. Find All Anagrams in a String(https://leetcode.com/problems/find-all-anagrams-in-a-string/)
+---------------------------------------------------------------------------------------------------------------------------------------
+10.Leetcode (https://leetcode.com/problems/minimum-window-substring/)
+
+class Solution {
+    //basic approach :- time :- O(n^2) | space :- O(n) where n = length of s
+public:
+    string minWindow(string s, string t) {
+        
+        unordered_map<char, int> tCharFreqMap;
+        for(char ch : t){
+            tCharFreqMap[ch] += 1;
+        }
+        
+        int windowLength = INT_MAX, startWindow = -1;
+        for(int i = 0; i < s.length(); i++){
+            
+            unordered_map<char, int> windowCharFreqMap;
+            
+            for(int j = i; j < s.length(); j++){
+                
+               windowCharFreqMap[s[j]] += 1; 
+                
+                if(isEqual(windowCharFreqMap, tCharFreqMap)){
+                    
+                    if((j + 1 - i) < windowLength){
+                        windowLength = j + 1 - i;
+                        startWindow = i;
+                    }
+                    break;
+                }
+            }
+        }
+        return (windowLength == INT_MAX) ? ""  : (s.substr(startWindow, windowLength));
+    }
+    
+    bool isEqual(unordered_map<char, int> &windowCharFreqMap, unordered_map<char, int> &tCharFreqMap){
+        for(auto pair : tCharFreqMap){
+            char ch = pair.first;
+            int freq = pair.second;
+            if(windowCharFreqMap.find(ch) == windowCharFreqMap.end() || windowCharFreqMap[ch] < freq){
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+class Solution {
+    //optimized solution :- time :- O(n) | space :- O(m) where n = length of s and m = length of t
+public:
+    string minWindow(string s, string t) {
+        unordered_map<char, int> tCharFreq;
+        int cnt = 0;  //distinct character in string t
+        for(char ch : t){
+            tCharFreq[ch] += 1;
+        }
+        
+        cnt = tCharFreq.size();
+        int windowStart = 0, substrIdx = -1, substrLength = INT_MAX;
+        for(int windowEnd = 0; windowEnd < s.size(); windowEnd++){
+            char rightChar = s[windowEnd];
+            if(tCharFreq.find(rightChar) != tCharFreq.end()){
+                tCharFreq[rightChar] -= 1;
+                if(tCharFreq[rightChar] == 0){
+                    cnt--;
+                }
+            }
+            
+            while(cnt == 0){
+                if(windowEnd - windowStart + 1 < substrLength){
+                    substrLength = windowEnd - windowStart + 1;
+                    substrIdx = windowStart;
+                }
+                
+                char leftChar = s[windowStart];
+                if(tCharFreq.find(leftChar) != tCharFreq.end()){
+                    tCharFreq[leftChar] += 1;
+                    if(tCharFreq[leftChar] > 0){
+                        cnt++;
+                    }
+                }
+                windowStart++;
+            }
+        }
+        return (substrIdx == -1) ? "" : s.substr(substrIdx, substrLength);
+    }
+};
